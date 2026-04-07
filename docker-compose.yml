@@ -1,0 +1,22 @@
+services:
+  panel:
+    build: .
+    container_name: mtproto-panel
+    restart: unless-stopped
+    ports:
+      - "${PANEL_PORT:-8080}:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/opt/mtproto-panel/data
+    environment:
+      - PORT=3000
+      - DB_PATH=/opt/mtproto-panel/data/panel.db
+      - SERVER_IP=${SERVER_IP}
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - mtproto-net
+
+networks:
+  mtproto-net:
+    name: mtproto-net
+    driver: bridge
